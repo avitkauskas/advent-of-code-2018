@@ -1,65 +1,74 @@
 (ns aoc.day11)
 
+(set! *warn-on-reflection* true)
+
 (def grid-serial 7803)
 (def grid-size 300)
 
-(defn hundreds-digit [n]
-  (-> n (quot 100) (rem 10)))
+(defn cell-power [r c]
+  (-> (+ (inc c) 10)
+      (* (inc r))
+      (+ grid-serial)
+      (* (+ (inc c) 10))
+      (quot 100)
+      (rem 10)
+      (- 5)))
 
-(defn cell-power [x y]
-  (let [rack-id (+ x 10)
-        init-power (* rack-id y)
-        incr-power (+ init-power grid-serial)
-        mult-power (* incr-power rack-id)
-        digit (hundreds-digit mult-power)
-        final-power (- digit 5)]
-    final-power))
+(def grid (make-array Long/TYPE grid-size grid-size))
 
-(def grid
-  (for [y (range 1 (inc grid-size))
-        x (range 1 (inc grid-size))]
-    (cell-power x y)))
+(defn fill-grid []
+  (dotimes [r grid-size]
+    (dotimes [c grid-size]
+      (aset ^longs (aget grid r) c (cell-power r c)))))
 
-(defn row-sets [size grid]
-  (->> grid
-       (partition grid-size)
-       (partition size 1)))
+(defn square-power [row col size]
+  (loop [r row
+         c col
+         power 0]
+    (if (= r (+ row size))
+      power
+      (if (= c (+ col size))
+        (recur (inc r) col power)
+        (recur r (inc c) (+ power (aget ^longs (aget grid r) c)))))))
 
-(defn cell-sets [size row-set]
-  (->> (map #(partition size 1 %) row-set)
-       (apply map concat)))
-
-(defn squares [size grid]
-  (->> grid
-       (row-sets size)
-       (map #(cell-sets size %))
-       (apply concat)))
-
-(defn max-power-indexed [size squares]
-  (->> (map-indexed (fn [i powers] [i (apply + powers)]) squares)
-       (apply max-key second)
-       (#(conj % size))))
-
-(defn idx-max-size [size]
-  (->> grid
-       (squares size)
-       (max-power-indexed size)))
-
-(defn index->coords [[idx _ size]]
-  (let [squares-in-row (inc (- grid-size size))
-        ix (rem idx squares-in-row)
-        iy (quot idx squares-in-row)]
-    [(inc ix) (inc iy) size]))
+(defn max-power [size]
+  (loop [r 0
+         c 0
+         res {:r 0 :c 0 :pow (square-power 0 0 size)}]
+    (if (> r (- grid-size size))
+      [(inc (:c res)) (inc (:r res)) (:pow res)]
+      (if (> c (- grid-size size))
+        (recur (inc r) 0 res)
+        (let [power (square-power r c size)]
+          (if (> power (:pow res))
+            (recur r (inc c) {:r r :c c :pow power})
+            (recur r (inc c) res)))))))
 
 (defn part-1 []
-  (-> (idx-max-size 3) index->coords))
+  (max-power 3))
 
 (defn part-2 []
-  (->> (map #(idx-max-size %) (range 1 (inc grid-size)))
-       (apply max-key second)
-       index->coords))
+  (loop [s 1
+         max-row 1
+         max-col 1
+         max-size 1
+         max-pow (square-power 0 0 1)]
+    (if (> s grid-size)
+      [max-col max-row max-size max-pow]
+      (let [[c r power] (max-power s)]
+        (println "size:" s "pow:" power)
+        (if (< power 0)
+         [max-col max-row max-size max-pow]
+         (if (> power max-pow)
+           (recur (inc s) r c s power)
+           (recur (inc s) max-row max-col max-size max-pow)))))))
 
-(comment
+(defn -main []
+  (fill-grid)
   (part-1)
-  #_(part-2)); takes ages → needs refactoring)
-  
+  (part-2))
+
+(comment        
+  (fill-grid)
+  (part-1)
+  (part-2))
