@@ -4,29 +4,29 @@ alias grid_serial: Int = 7803
 alias grid_size: Int = 300
 
 
-def hundreds_digit(num: Int) -> Int:
+fn hundreds_digit(num: Int) -> Int:
     return (num // 100) % 10
 
 
-def cell_power(x: Int, y: Int) -> Int:
+fn cell_power(x: Int, y: Int) -> Int:
     let c: Int = x + 1
     let r: Int = y + 1
-    rack_id = c + 10
-    init_power = rack_id * r
-    incr_power = init_power + grid_serial
-    mult_power = incr_power * rack_id
-    digit = hundreds_digit(mult_power)
-    final_power = digit - 5
+    let rack_id = c + 10
+    let init_power = rack_id * r
+    let incr_power = init_power + grid_serial
+    let mult_power = incr_power * rack_id
+    let digit = hundreds_digit(mult_power)
+    let final_power = digit - 5
     return final_power
 
 
-def fill_grid(inout grid: Pointer[Int]):
+fn fill_grid(inout grid: Pointer[Int]):
     for y in range(grid_size):
         for x in range(grid_size):
             grid.store(y * grid_size + x, cell_power(x, y))
 
 
-def square_power(grid: Pointer[Int], x: Int, y: Int, size: Int) -> Int:
+fn square_power(grid: Pointer[Int], x: Int, y: Int, size: Int) -> Int:
     var power: Int = 0
     for r in range(y, y + size):
         for c in range(x, x + size):
@@ -34,7 +34,7 @@ def square_power(grid: Pointer[Int], x: Int, y: Int, size: Int) -> Int:
     return power
 
 
-def max_square(grid: Pointer[Int], size: Int, inout res: Pointer[Int]):
+fn max_square(grid: Pointer[Int], size: Int, inout res: Pointer[Int]):
     res.store(0, 0)
     res.store(1, 0)
     res.store(2, square_power(grid, 0, 0, size))
@@ -47,7 +47,7 @@ def max_square(grid: Pointer[Int], size: Int, inout res: Pointer[Int]):
                 res.store(2, max_power)
 
 
-def main():
+fn main():
     var grid = Pointer[Int].alloc(grid_size * grid_size)
     fill_grid(grid)
 
