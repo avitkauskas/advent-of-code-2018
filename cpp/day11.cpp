@@ -63,9 +63,7 @@ int main() {
     // cout << size << "\n";
     MaxSquare interim = max_square(size);
     if (interim.val > part2.val) {
-      part2.val = interim.val;
-      part2.x = interim.x;
-      part2.y = interim.y;
+      part2 = interim;
       max_size = size;
     } 
   }

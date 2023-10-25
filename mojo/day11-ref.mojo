@@ -3,7 +3,6 @@ from memory.unsafe import Pointer
 alias grid_serial: Int = 7803
 alias grid_size: Int = 300
 
-alias Simd4 = SIMD[DType.int64, 4]
 
 fn hundreds_digit(num: Int) -> Int:
     return (num // 100) % 10
@@ -35,17 +34,17 @@ fn square_power(grid: Pointer[Int], x: Int, y: Int, size: Int) -> Int:
     return power
 
 
-fn max_square(grid: Pointer[Int], size: Int, inout res: Simd4):
-    res[0] = 0
-    res[1] = 0
-    res[2] = square_power(grid, 0, 0, size)
+fn max_square(grid: Pointer[Int], size: Int, inout res: Pointer[Int]):
+    res.store(0, 0)
+    res.store(1, 0)
+    res.store(2, square_power(grid, 0, 0, size))
     for x in range(grid_size - size + 1):
         for y in range(grid_size - size + 1):
-            let max_power: Int64 = square_power(grid, x, y, size)
+            let max_power: Int = square_power(grid, x, y, size)
             if max_power > res[2]:
-                res[0] = x
-                res[1] = y
-                res[2] = max_power
+                res.store(0, x)
+                res.store(1, y)
+                res.store(2, max_power)
 
 
 fn main():
@@ -53,21 +52,27 @@ fn main():
     fill_grid(grid)
 
     # part 1
-    var res1 = Simd4()
+    var res1 = Pointer[Int].alloc(3)
     max_square(grid, 3, res1)
     print(res1[0] + 1, res1[1] + 1)
+    res1.free()
 
     # part 2
-    var res2 = Simd4()
-    var candidate = Simd4()
-    res2[2] = square_power(grid, 0, 0, 1)
-    res2[3] = 1
+    let res2 = Pointer[Int].alloc(3)
+    var candidate = Pointer[Int].alloc(3)
+    res2.store(0, 0)
+    res2.store(1, 0)
+    res2.store(2, square_power(grid, 0, 0, 1))
+    var max_size: Int = 1
     for size in range(1, grid_size + 1):
         # print(size)
         max_square(grid, size, candidate)
         if candidate[2] > res2[2]:
-            res2 = candidate
-            res2[3] = size
-    print(res2[0] + 1, res2[1] + 1, res2[3])
+            res2.store(0, candidate[0])
+            res2.store(1, candidate[1])
+            res2.store(2, candidate[2])
+            max_size = size
+    print(res2[0] + 1, res2[1] + 1, max_size)
+    res2.free()
 
     grid.free()
