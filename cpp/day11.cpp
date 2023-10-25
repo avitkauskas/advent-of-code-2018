@@ -1,3 +1,6 @@
+// compile with max optimization for speed:
+// g++ -std=c++20 -O3 -o day11 day11.cpp
+
 #include <iostream>
 using namespace std;
 
@@ -57,7 +60,7 @@ int main() {
   int max_size = 1;
 
   for (int size = 1; size <= grid_size; ++size) {
-    cout << size << "\n";
+    // cout << size << "\n";
     MaxSquare interim = max_square(size);
     if (interim.val > part2.val) {
       part2.val = interim.val;

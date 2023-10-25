@@ -45,7 +45,7 @@ grid = make_grid()
 
 # part 1
 x, y, _ = max_square(grid, 3)
-print(f"{x + 1}, {y + 1}\n")
+print(f"{x + 1}, {y + 1}")
 
 # part 2
 max_x, max_y = 0, 0
@@ -59,4 +59,4 @@ for size in range(1, grid_size + 1):
        max_power = power
        max_x, max_y = x, y
        max_size = size
-print(f"{max_x + 1}, {max_y + 1}, {max_size}\n")
+print(f"{max_x + 1}, {max_y + 1}, {max_size}")
