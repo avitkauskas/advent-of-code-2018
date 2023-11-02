@@ -108,12 +108,12 @@
 (defn field-points [field]
   (apply + (map (fn [[_rc cell]] (:hit cell 0)) field)))
 
-(defn part-1 []
+(defn part-1 [& _args]
   (let [rounds (take-while :enemies? (iterate play-round {:field init-field :enemies? true :kills #{}}))
         full-rounds (dec (count rounds))
         last-round (play-round {:field (-> rounds last :field) :enemies? true :kills #{}})
         points (field-points (:field last-round))]
-    (* full-rounds points)))
+    (println (* full-rounds points))))
 
 (comment
   (part-1))
