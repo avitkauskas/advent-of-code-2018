@@ -1,5 +1,5 @@
 GRID_SERIAL = 7803
-GRID_SIZE = 300
+GRID_SIZE   =  300
 
 GRID = Array.new(GRID_SIZE) do |x|
   x += 1
@@ -11,9 +11,9 @@ end
 
 def square_power(x, y, size)
   power = 0
-  (x...(x + size)).each do |x|
-    (y...(y + size)).each do |y|
-      power += GRID[x][y]
+  (x...x + size).each do |i|
+    (y...y + size).each do |j|
+      power += GRID[i][j]
     end
   end
   power
@@ -21,8 +21,9 @@ end
 
 def max_square(size)
   max_power = {x: 0, y: 0, power: square_power(0, 0, size)}
-  (0..(GRID_SIZE - size)).each do |x|
-    (0..(GRID_SIZE - size)).each do |y|
+  n = GRID_SIZE - size
+  n.times do |x|
+    n.times do |y|
       power = square_power(x, y, size)
       if power > max_power[:power]
         max_power = {x: x, y: y, power: power}
