@@ -30,7 +30,7 @@ defmodule Day01 do
   end
 end
 
-input = Day01.parse_input("../data/input01.txt")
+input = Day01.parse_input("data/input01.txt")
 
 input |> Day01.part1() |> IO.puts()
 input |> Day01.part2() |> IO.puts()
