@@ -54,5 +54,5 @@ end
 
 input = Day02.parse_input("data/input02.txt")
 
-input |> Day02.part1() |> IO.puts()
-input |> Day02.part2() |> IO.puts()
+Day02.part1(input) |> IO.puts()
+Day02.part2(input) |> IO.puts()
