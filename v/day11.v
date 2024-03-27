@@ -1,37 +1,42 @@
 const grid_serial = 7803
 const grid_size = 300
 
+struct Grid {
+	mut: 
+		cells [grid_size][grid_size]int
+}
+
 fn cell_power(i int, j int) int {
 	x := i + 1
 	y := j + 1
 	return ((((x + 10) * y) + grid_serial) * (x + 10)) / 100 % 10 - 5
 }
 
-fn make_grid() [grid_size][grid_size]int {
-	mut grid := [grid_size][grid_size]int{}
+fn make_grid() Grid {
+	mut grid := Grid{}
 
 	for i in 0 .. grid_size {
 		for j in 0 .. grid_size {
-			grid[i][j] = cell_power(i, j)
+			grid.cells[i][j] = cell_power(i, j)
 		}
 	}
 
 	return grid
 }
 
-fn square_power(grid [grid_size][grid_size]int, x int, y int, size int) int {
+fn square_power(grid &Grid, x int, y int, size int) int {
 	mut power := 0
 
 	for i in x .. x + size {
 		for j in y .. y + size {
-			power += grid[i][j]
+			power += grid.cells[i][j]
 		}
 	}
 
 	return power
 }
 
-fn max_square(grid [grid_size][grid_size]int, size int) (int, int, int) {
+fn max_square(grid &Grid, size int) (int, int, int) {
 	mut max_x, mut max_y, mut max_pow := 0, 0, square_power(grid, 0, 0, size)
 
 	n := grid_size - size
@@ -47,7 +52,7 @@ fn max_square(grid [grid_size][grid_size]int, size int) (int, int, int) {
 	return max_x, max_y, max_pow
 }
 
-fn max_total(grid [grid_size][grid_size]int) (int, int, int) {
+fn max_total(grid &Grid) (int, int, int) {
 	mut max_x, mut max_y, mut max_pow := 0, 0, square_power(grid, 0, 0, 1)
 	mut max_size := 1
 
